@@ -1,0 +1,79 @@
+/* GLOBAL STYLING */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f9fc;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1a1a1a;
+}
+
+/* FORM STYLING */
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  align-items: center;
+}
+
+select,
+textarea,
+input[type="text"] {
+  width: 90%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  font-size: 15px;
+}
+
+textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.25s ease;
+}
+
+.btn-primary:hover {
+  background: #005fcc;
+}
+
+/* SECONDARY BUTTONS */
+button {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 450px) {
+  .container {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,59 @@
+---
+2. session.html — Session Simulation
+---
+
+3. progress.html — Progress Tracking
+
+---
+
+4. settings.html — Profile & Settings
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Settings & Profile</h1>
+  <form id="settingsForm">
+    <label>User Mode:</label>
+    <select name="mode">
+      <option value="neuropathic">Neuropathic Pain</option>
+      <option value="general">General Pain</option>
+    </select>
+
+    <label>Medications:</label>
+    <textarea name="medications"></textarea>
+
+    <button type="submit" class="btn-primary">Save</button>
+
+  </form>
+
+<button class="btn-primary" onclick="exportData()">Export Data</button>
+<button class="btn-primary" onclick="goDashboard()">Back to Dashboard</button>
+
+</div>
+
+<script src="script.js"></script>
+<script>
+  const settingsForm = document.getElementById('settingsForm');
+  const user = loadUserData();
+  settingsForm.mode.value = user.mode;
+  settingsForm.medications.value = user.medications || '';
+
+  settingsForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    user.mode = settingsForm.mode.value;
+    user.medications = settingsForm.medications.value;
+    localStorage.setItem('tensUser', JSON.stringify(user));
+    alert('Settings saved!');
+  });
+
+  function goDashboard(){ window.location.href = 'dashboard.html'; }
+</script>
+</body>
+</html>

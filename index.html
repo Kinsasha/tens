@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Dashboard</h1>
+      <p>Welcome, <span id="userMode"></span> mode user!</p>
+
+      <label>Today's Pain Level (0-10):</label>
+      <input type="range" id="painLevel" min="0" max="10" step="1" value="0" />
+      <span id="painValue">0</span>
+
+      <button class="btn-primary" onclick="startSessionPage()">
+        Start New Session
+      </button>
+
+      <h2>Recent Sessions</h2>
+      <div id="recentSessions">
+        <!-- Session summaries will load here -->
+      </div>
+
+      <h2>Medication Reminders</h2>
+      <div id="medications">
+        <!-- Medication list -->
+      </div>
+
+      <button class="btn-primary" id="clearSessionsBtn">
+        Clear Recent Sessions
+      </button>
+      <button class="btn-primary" onclick="goHome()">Home</button>
+      <button class="btn-primary" onclick="goToSettings()">Settings</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      // Load user data
+      function loadUserData() {
+        const data = localStorage.getItem("tensUser");
+
+        if (data) return JSON.parse(data);
+
+        // Default user object
+        const defaultUser = {
+          mode: "patient",
+          medications: "",
+        };
+
+        localStorage.setItem("tensUser", JSON.stringify(defaultUser));
+        return defaultUser;
+      }
+
+      const user = loadUserData();
+
+      // Set mode text
+      document.getElementById("userMode").textContent =
+        user.mode.charAt(0).toUpperCase() + user.mode.slice(1);
+
+      // Pain level slider
+      const slider = document.getElementById("painLevel");
+      const value = document.getElementById("painValue");
+
+      slider.addEventListener("input", () => {
+        value.textContent = slider.value;
+      });
+
+      // Load recent sessions
+      function loadSessions() {
+        const sessions = JSON.parse(
+          localStorage.getItem("tensSessions") || "[]"
+        );
+        const recentDiv = document.getElementById("recentSessions");
+
+        recentDiv.innerHTML = ""; // Clear UI
+
+        if (sessions.length === 0) {
+          recentDiv.innerHTML = "<p>No sessions yet.</p>";
+          return;
+        }
+
+        sessions
+          .slice(-5)
+          .reverse()
+          .forEach((session) => {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+        <strong>${session.date}</strong>  
+        - Pre: ${session.prePainLevel},  
+        Post: ${session.postPainLevel}
+      `;
+            recentDiv.appendChild(div);
+          });
+      }
+
+      loadSessions();
+
+      // Clear recent sessions
+      document
+        .getElementById("clearSessionsBtn")
+        .addEventListener("click", function () {
+          localStorage.removeItem("tensSessions"); // ✔ Correct key
+
+          const sessionContainer = document.getElementById("recentSessions");
+          sessionContainer.innerHTML = "<p>No recent sessions.</p>";
+
+          alert("Recent sessions cleared!");
+        });
+
+      // Load medication reminders
+      function loadMedications() {
+        const medsDiv = document.getElementById("medications");
+
+        if (!user.medications) return;
+
+        user.medications.split("\n").forEach((med) => {
+          if (med.trim() !== "") {
+            const div = document.createElement("div");
+            div.textContent = "💊 " + med;
+            medsDiv.appendChild(div);
+          }
+        });
+      }
+
+      loadMedications();
+
+      // Navigation
+      function startSessionPage() {
+        window.location.href = "session.html";
+      }
+
+      function goHome() {
+        window.location.href = "landing.html";
+      }
+
+      function goToSettings() {
+        window.location.href = "settings.html";
+      }
+    </script>
+  </body>
+</html>

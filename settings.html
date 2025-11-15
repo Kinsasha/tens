@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Settings & Profile</h1>
+      <form id="settingsForm">
+        <label>User Mode:</label>
+        <select name="mode">
+          <option value="neuropathic">Neuropathic Pain</option>
+          <option value="general">General Pain</option>
+        </select>
+
+        <label>Medications:</label>
+        <textarea name="medications"></textarea>
+
+        <button type="submit" class="btn-primary">Save</button>
+      </form>
+
+      <button class="btn-primary" onclick="exportData()">Export Data</button>
+      <button class="btn-primary" onclick="goDashboard()">
+        Go to Dashboard
+      </button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      /** -----------------------------
+       *  Load User Data (or create default)
+       *  ----------------------------- */
+      function loadUserData() {
+        const data = localStorage.getItem("tensUser");
+
+        if (data) return JSON.parse(data);
+
+        // Create default profile if none exists
+        const defaultUser = {
+          mode: "neuropathic",
+          medications: "",
+        };
+
+        localStorage.setItem("tensUser", JSON.stringify(defaultUser));
+        return defaultUser;
+      }
+
+      /** -----------------------------
+       *  Save User Data
+       *  ----------------------------- */
+      function saveUserData(updatedUser) {
+        localStorage.setItem("tensUser", JSON.stringify(updatedUser));
+        alert("Settings saved!");
+      }
+
+      /** -----------------------------
+       *  Navigation
+       *  ----------------------------- */
+      function goDashboard() {
+        window.location.href = "index.html";
+      }
+
+      /** -----------------------------
+       *  Page Initialization
+       *  ----------------------------- */
+      const settingsForm = document.getElementById("settingsForm");
+      const user = loadUserData();
+
+      // Populate form with existing profile data
+      settingsForm.mode.value = user.mode;
+      settingsForm.medications.value = user.medications || "";
+
+      /** -----------------------------
+       *  Handle Form Submission
+       *  ----------------------------- */
+      settingsForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const updatedUser = {
+          mode: settingsForm.mode.value,
+          medications: settingsForm.medications.value.trim(),
+        };
+
+        saveUserData(updatedUser);
+      });
+    </script>
+  </body>
+</html>

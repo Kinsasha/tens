@@ -1,0 +1,71 @@
+/* GENERAL PAGE STYLING */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+/* WRAPPER */
+.wrapper {
+  max-width: 450px;
+  padding: 20px;
+}
+
+/* ICON */
+.icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #ff9800;
+}
+
+/* TITLE */
+h1 {
+  margin: 45px 0;
+  font-size: 40px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* SUBTITLE */
+.subtitle {
+  color: #555;
+  margin-top: 10px;
+  margin-bottom: 35px;
+  font-size: 15px;
+}
+
+/* SECTION TITLE */
+h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* DESCRIPTION TEXT */
+.description {
+  color: #666;
+  margin-bottom: 50px;
+  margin-top: 30px;
+}
+
+/* BUTTON */
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  padding: 20px 50px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}

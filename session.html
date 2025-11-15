@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Session</title>
+    <link rel="stylesheet" href="session.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Active Session</h1>
+
+      <p>Mode: <span id="sessionMode"></span></p>
+
+      <label>Intensity (0–10):</label>
+      <input type="range" id="intensity" min="0" max="10" step="1" value="0" />
+      <span id="intensityValue">0</span>
+
+      <h2>Timer: <span id="timer">15:00</span></h2>
+
+      <button class="btn-primary" onclick="startSession()">Start</button>
+      <button class="btn-primary" onclick="emergencyStop()">
+        Emergency Stop
+      </button>
+
+      <h2>Post-Session Feedback</h2>
+
+      <form id="feedbackForm">
+        <label>Pain Level After Session:</label>
+        <input
+          type="range"
+          name="postPainLevel"
+          min="0"
+          max="10"
+          step="1"
+          value="0"
+          id="pain"
+        />
+        <span id="painValue">0</span>
+
+        <label>Side Effects / Notes:</label>
+        <textarea name="notes"></textarea>
+
+        <button type="submit" class="btn-primary">Submit</button>
+      </form>
+      <button class="btn-primary" onclick="goHome()">Home</button>
+    </div>
+
+    <script>
+      /************************
+       * LOAD USER DATA
+       ************************/
+      function loadUserData() {
+        const data = localStorage.getItem("tensUser");
+        if (data) return JSON.parse(data);
+
+        const defaultUser = {
+          mode: "patient",
+          medications: "",
+        };
+
+        localStorage.setItem("tensUser", JSON.stringify(defaultUser));
+        return defaultUser;
+      }
+
+      const user = loadUserData();
+      document.getElementById("sessionMode").textContent =
+        user.mode.charAt(0).toUpperCase() + user.mode.slice(1);
+
+      /************************
+       * INTENSITY SLIDER
+       ************************/
+      const intensitySlider = document.getElementById("intensity");
+      const intensityValue = document.getElementById("intensityValue");
+
+      intensityValue.textContent = intensitySlider.value;
+      intensitySlider.addEventListener("input", () => {
+        intensityValue.textContent = intensitySlider.value;
+      });
+
+      /************************
+       * TIMER
+       ************************/
+      let sessionInterval = null;
+
+      function startSession(duration = 15) {
+        if (sessionInterval) return; // prevent double timers
+
+        let remaining = duration * 60;
+
+        sessionInterval = setInterval(() => {
+          const mins = Math.floor(remaining / 60);
+          const secs = remaining % 60;
+
+          document.getElementById("timer").textContent = `${mins}:${secs
+            .toString()
+            .padStart(2, "0")}`;
+
+          remaining--;
+
+          if (remaining < 0) {
+            clearInterval(sessionInterval);
+            sessionInterval = null;
+            alert("Session complete! Please submit feedback.");
+          }
+        }, 1000);
+      }
+
+      function emergencyStop() {
+        clearInterval(sessionInterval);
+        sessionInterval = null;
+        alert("Session stopped!");
+      }
+
+      /************************
+       * PAIN SLIDER
+       ************************/
+      const painSlider = document.getElementById("pain");
+      const painValue = document.getElementById("painValue");
+
+      painValue.textContent = painSlider.value;
+      painSlider.addEventListener("input", () => {
+        painValue.textContent = painSlider.value;
+      });
+
+      /************************
+       * SAVE SESSION
+       ************************/
+      function logSession(session) {
+        const sessions = JSON.parse(
+          localStorage.getItem("tensSessions") || "[]"
+        );
+        sessions.push(session);
+        localStorage.setItem("tensSessions", JSON.stringify(sessions));
+      }
+
+      function goHome() {
+        window.location.href = "landing.html";
+      }
+
+      /************************
+       * FEEDBACK SUBMISSION
+       ************************/
+      const feedbackForm = document.getElementById("feedbackForm");
+
+      feedbackForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const sessionData = {
+          date: new Date().toLocaleString(),
+          prePainLevel: 0, // (you can add pre-session slider later)
+          postPainLevel: feedbackForm.postPainLevel.value,
+          intensity: intensitySlider.value,
+          notes: feedbackForm.notes.value,
+        };
+
+        logSession(sessionData);
+
+        alert("Session logged! Redirecting...");
+        window.location.href = "progress.html";
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress</title>
+    <link rel="stylesheet" href="progress.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Progress Tracking</h1>
+      <canvas id="painChart" style="height: 300px"></canvas>
+
+      <h2>Session Summary</h2>
+      <div id="sessionSummary"></div>
+
+      <button class="btn-primary" onclick="exportData()">
+        Share with Doctor
+      </button>
+      <button class="btn-primary" onclick="goBack()">Back to Dashboard</button>
+      <button class="btn-primary" onclick="goHome()">Home</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      // Load sessions safely
+      const sessions = JSON.parse(localStorage.getItem("tensSessions") || "[]");
+
+      // ======== GENERATE PROGRESS CHART ========
+      function generateProgressChart(ctx, data) {
+        if (!data || data.length === 0) {
+          // If no sessions, draw empty chart
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: "Pain Levels",
+                  data: [],
+                },
+              ],
+            },
+            options: { responsive: true },
+          });
+          return;
+        }
+
+        const labels = data.map((s) => s.date);
+        const prePain = data.map((s) => s.prePainLevel);
+        const postPain = data.map((s) => s.postPainLevel);
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Pre-Session Pain",
+                data: prePain,
+                borderColor: "rgb(255, 99, 132)",
+                tension: 0.3,
+              },
+              {
+                label: "Post-Session Pain",
+                data: postPain,
+                borderColor: "rgb(54, 162, 235)",
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { min: 0, max: 10 },
+            },
+          },
+        });
+      }
+
+      // ======== LOAD CHART ========
+      const ctx = document.getElementById("painChart").getContext("2d");
+      generateProgressChart(ctx, sessions);
+
+      // ======== LOAD SESSION SUMMARY ========
+      const summaryDiv = document.getElementById("sessionSummary");
+
+      if (sessions.length === 0) {
+        summaryDiv.innerHTML = "<p>No sessions logged yet.</p>";
+      } else {
+        sessions.forEach((s) => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+        <strong>${s.date}</strong><br>
+        Pre: ${s.prePainLevel} | 
+        Post: ${s.postPainLevel} | 
+        Intensity: ${s.intensity}
+      `;
+          summaryDiv.appendChild(div);
+        });
+      }
+
+      // ======== EXPORT DATA (Download JSON) ========
+      function exportData() {
+        const file = new Blob([JSON.stringify(sessions, null, 2)], {
+          type: "application/json",
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(file);
+        a.download = "tens_progress_data.json";
+        a.click();
+      }
+
+      // ======== GO BACK ========
+      function goBack() {
+        window.location.href = "index.html";
+      }
+      function goHome() {
+        window.location.href = "landing.html";
+      }
+    </script>
+  </body>
+</html>
